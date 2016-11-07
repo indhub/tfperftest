@@ -273,7 +273,8 @@ def train(target, dataset, cluster_spec):
       # specified interval. Note that the summary_op and train_op never run
       # simultaneously in order to prevent running out of GPU memory.
       next_summary_time = time.time() + FLAGS.save_summaries_secs
-      while not sv.should_stop():
+      step = 0
+      while (not sv.should_stop()) and step<=180:
         try:
           start_time = time.time()
           loss_value, step = sess.run([train_op, global_step])
