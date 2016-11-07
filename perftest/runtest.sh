@@ -37,6 +37,7 @@ rm inception.tar.gz
 tar -czvf inception.tar.gz ../inception/inception/
 
 echo "Copying scripts to remote nodes..."
+head -$NUM_NODES $NODES_FILE |
 while read line; do
   if [ -z line ]; then continue; fi
     
@@ -45,7 +46,7 @@ while read line; do
   ssh_alias=${arr[1]}
   scp inception.tar.gz $ssh_alias:$REMOTE_DIR
   ssh $ssh_alias 'cd '${REMOTE_DIR}' && tar -xvzf inception.tar.gz > /dev/null 2>&1' &
-done < $NODES_FILE
+done
 
 echo "Generating runners..."
 rm -rf gen

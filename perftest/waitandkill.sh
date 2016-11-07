@@ -25,13 +25,12 @@ do
 
     sleep 30
     
-    #head -$NUM_NODES $HOSTS_FILE |
     while read line; do
 
         tuple=( $line )
         ssh_alias=${tuple[1]}
 
-        nump=`ssh -n $ssh_alias "ps -ef | grep imagenet_distributed_train.py | grep -v grep  | wc -l"`
+        nump=`ssh $ssh_alias "ps -ef | grep imagenet_distributed_train.py | grep -v grep  | wc -l"`
 
         if [ "$nump" -le 1 ]
             then
