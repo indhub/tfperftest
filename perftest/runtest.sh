@@ -82,7 +82,7 @@ head -$NUM_NODES $NODES_FILE |
 while read line; do
   tuple=( $line )
   ssh_alias=${tuple[1]}
-  ssh ${ssh_alias} "tail -f /tmp/worker* | grep --line-buffered 'examples/sec'" &
+  ssh ${ssh_alias} "tail -f /tmp/worker* | grep --line-buffered '/sec'" &
 done
 
 # waitandkill will wake us from sleep after all workers are done
