@@ -11,6 +11,10 @@ case $key in
     HOSTS_FILE="$2"
     shift 
     ;;
+    -s|--script_name)
+    SCRIPT_NAME="$2"
+    shift 
+    ;;
     *)
           # unknown option
     ;;
@@ -30,7 +34,7 @@ do
         tuple=( $line )
         ssh_alias=${tuple[1]}
 
-        nump=`ssh $ssh_alias "ps -ef | grep imagenet_distributed_train.py | grep -v grep  | wc -l"`
+        nump=`ssh $ssh_alias "ps -ef | grep '$SCRIPT_NAME' | grep -v grep  | wc -l"`
 
         if [ "$nump" -le 1 ]
             then
@@ -51,7 +55,7 @@ do
           ssh_alias=${tuple[1]}
 
           ssh -n $ssh_alias "pkill tail"
-          ssh -n $ssh_alias "ps -ef | grep 'imagenet_distributed_train' |  grep -v grep | xargs echo | cut -d' ' -f2 | xargs kill -9"
+          ssh -n $ssh_alias "ps -ef | grep '$SCRIPT_NAME' |  grep -v grep | xargs echo | cut -d' ' -f2 | xargs kill -9"
         done      
         
         ps -ef | grep "sleep 43200" |  grep -v grep | xargs echo | cut -d' ' -f2 | xargs kill -9

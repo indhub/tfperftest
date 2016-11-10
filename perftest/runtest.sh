@@ -5,6 +5,10 @@ do
 key="$1"
 
 case $key in
+    -m|--model)
+    MODEL="$2"
+    shift # past argument
+    ;;
     -h|--nodes_file)
     NODES_FILE="$2"
     shift # past argument
@@ -32,9 +36,15 @@ esac
 shift # past argument or value
 done
 
-echo "Compressing Inception v3 files..."
-rm inception.tar.gz
-tar -czvf inception.tar.gz ../inception/inception/
+echo "Compressing model files..."
+if [ "$MODEL" == "inceptionv3" ]; then
+    model_path="../inception/inception/"
+elif [ "$MODEL" == "alexnet" ]; then   
+    model_path="../alexnet/"
+fi
+
+rm model.tar.gz
+tar -czvf model.tar.gz $model_path
 
 echo "Copying scripts to remote nodes..."
 head -$NUM_NODES $NODES_FILE |
@@ -44,17 +54,21 @@ while read line; do
   arr=( $line )
   host_name=${arr[0]}
   ssh_alias=${arr[1]}
-  scp inception.tar.gz $ssh_alias:$REMOTE_DIR
-  ssh $ssh_alias 'cd '${REMOTE_DIR}' && tar -xvzf inception.tar.gz > /dev/null 2>&1' &
+  scp model.tar.gz $ssh_alias:$REMOTE_DIR
+  ssh $ssh_alias 'cd '${REMOTE_DIR}' && tar -xvzf model.tar.gz > /dev/null 2>&1' &
 done
 
 echo "Generating runners..."
 rm -rf gen
 mkdir -p gen
-python generate_runner.py --nodes=$NODES_FILE --gen_dir=gen --remote_dir="${REMOTE_DIR}" --num_nodes=$NUM_NODES --gpu_per_node=$GPU_PER_NODE --batch_size=$BATCH_SIZE
+script_name=`python generate_runner.py --model=$MODEL --nodes=$NODES_FILE --gen_dir=gen --remote_dir="${REMOTE_DIR}" --num_nodes=$NUM_NODES --gpu_per_node=$GPU_PER_NODE --batch_size=$BATCH_SIZE`
 
 echo "Copying runners..."
-RUNNER_DEST=$REMOTE_DIR/inception/inception/
+if [ "$MODEL" == "inceptionv3" ]; then
+    RUNNER_DEST=$REMOTE_DIR/inception/inception/
+elif [ "$MODEL" == "alexnet" ]; then   
+    RUNNER_DEST=$REMOTE_DIR/alexnet/
+fi
 
 index=1
 head -$NUM_NODES $NODES_FILE |
@@ -86,12 +100,12 @@ while read line; do
 done
 
 # waitandkill will wake us from sleep after all workers are done
-bash waitandkill.sh -n $NUM_NODES -h $NODES_FILE &
+bash waitandkill.sh -n $NUM_NODES -h $NODES_FILE -s $script_name &
 sleep 43200 #12 hours
 
 #Workers are done. Collect the logs
 echo "Copying logs..."
-LOG_DIR=logs/m${NUM_NODES}g${GPU_PER_NODE}
+LOG_DIR=logs/${MODEL}m${NUM_NODES}g${GPU_PER_NODE}
 rm -rf $LOG_DIR
 mkdir -p $LOG_DIR
 
