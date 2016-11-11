@@ -1,36 +1,17 @@
-**What do these scripts do?**
+### What do these scripts do?
 
 These scripts make is easy to measure the images/sec that TF can process under a synchronous distributed training setting. 
 
-**What model is used for training?**
+### What model is used for training?
+Inception v3 and Alexnet. Inception v3 is based on https://github.com/tensorflow/models/tree/master/inception. AlexNet is based on https://github.com/tensorflow/tensorflow/blob/master/tensorflow/models/image/alexnet/alexnet_benchmark.py. Fully connected layers were added at the end to complete the network.
 
-Currently, only Inception V3. Here is the code that is used: https://github.com/tensorflow/models/tree/master/inception
+### What data is used for training?
 
-**What data is used for training?**
+Since these scripts only calculate the images processed per second, the scripts use randomly generated synthetic data similar to how it is done here: https://github.com/tensorflow/tensorflow/blob/master/tensorflow/models/image/alexnet/alexnet_benchmark.py
 
-Since these scripts only calculate the images processed per second, the scripts use randomly generated fake data similar to how it is done here: https://github.com/tensorflow/tensorflow/blob/master/tensorflow/models/image/alexnet/alexnet_benchmark.py
+### How to run the scripts?
 
-**How to run the scripts?**
-
-1. Checkout https://github.com/indhub/tfperftest.git
-2. CD to 'perftest' (https://github.com/indhub/tfperftest/tree/master/perftest) directory.
-3. Run runtest.sh.
-Example: 
-
-    bash runtest.sh -h nodes -r /tmp/ -n 2 -g 2 -b 32
-
-where,
-
--r: an empty directory in the nodes where to copy the scripts and run the training. 
-
--n: number of nodes to use in training. 
-
--g: number of GPUs in each node to use for training. 
-
--b: batch size per GPU.
-
--n: node file formatted as shown below
-
+Step 1: Create a 'nodes' file containing the list of machines to be used in the test. Each line in the nodes file corresponds to one machine. Each line has the DNS name of the machine and the ssh alias that can be used to connect to that machine without entering password.Here is the format of the file:
 
     host1.example.com node1
     host2.example.com node1
@@ -39,9 +20,37 @@ where,
     .
     hostn.example.com node3
 
-host(x).example.com is the DNS name for the node and node(x) is the alias that can be used for ssh without having to type password. One way to configure it is to use ~/.ssh/config to config the keys. For example "ssh node1" or "scp node1" should work without having to type the password.
+Here is an example config from ~/.ssh/config to create an ssh alias:
 
-**What does the script output?**
+    Host node1
+        HostName host1.example.com
+        port 22
+        user ubuntu
+        IdentityFile /Users/my_uname/my_ssh_key.pem
+
+Step 2: Checkout https://github.com/indhub/tfperftest.git and CD to 'perftest' (https://github.com/indhub/tfperftest/tree/master/perftest) directory.
+
+Step 3: Run runtest.sh.
+
+Example: 
+
+    bash runtest.sh -m inceptionv3 -h nodes -r /tmp/ -n 2 -g 2 -b 32
+
+where,
+
+-m: Name of the model to run. Can be 'inceptionv3' or 'alexnet'
+
+-r: a directory in the remote nodes where to copy the scripts and run the training. 
+
+-n: number of nodes to use in training. 
+
+-g: number of GPUs in each node to use for training. 
+
+-b: batch size per GPU.
+
+-n: node file described in step 1.
+
+## What does the script output?
 
 Here is a sample output:
 
@@ -96,7 +105,7 @@ Here is a sample output:
     worker3                                                                                                                                                                                100%  112KB 111.6KB/s   00:00    
     Nodes: 2; GPUs per node: 2; Images/sec: 16.808
 
-The scripts also write these data into the 'log' folder.
+The scripts also write this data into the 'log' folder.
 
 
 
