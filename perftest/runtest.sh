@@ -41,6 +41,8 @@ if [ "$MODEL" == "inceptionv3" ]; then
     model_path="../inception/inception/"
 elif [ "$MODEL" == "alexnet" ]; then   
     model_path="../alexnet/"
+elif [ "$MODEL" == "resnet" ]; then   
+    model_path="../resnet/"
 fi
 
 rm model.tar.gz
@@ -68,6 +70,8 @@ if [ "$MODEL" == "inceptionv3" ]; then
     RUNNER_DEST=$REMOTE_DIR/inception/inception/
 elif [ "$MODEL" == "alexnet" ]; then   
     RUNNER_DEST=$REMOTE_DIR/alexnet/
+elif [ "$MODEL" == "resnet" ]; then   
+    RUNNER_DEST=$REMOTE_DIR/resnet/
 fi
 
 index=1
@@ -105,7 +109,7 @@ sleep 43200 #12 hours
 
 #Workers are done. Collect the logs
 echo "Copying logs..."
-LOG_DIR=logs/${MODEL}m${NUM_NODES}g${GPU_PER_NODE}
+LOG_DIR=logs/${MODEL}b${BATCH_SIZE}m${NUM_NODES}g${GPU_PER_NODE}
 rm -rf $LOG_DIR
 mkdir -p $LOG_DIR
 

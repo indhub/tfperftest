@@ -71,12 +71,14 @@ def get_script_name(model):
     return {
         'inceptionv3':'imagenet_distributed_train.py',
         'alexnet':'alexnet.py',
+        'resnet':'resnet_dist.py',
     }.get(model, 'unknown-model')
 
 def get_model_dir(model, remote_dir):
     suffix = {
         'inceptionv3':'inception/inception',
         'alexnet':'alexnet',
+        'resnet':'resnet',
     }.get(model, 'unknown-model')
     return remote_dir + suffix;
 
