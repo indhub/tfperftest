@@ -109,7 +109,8 @@ sleep 43200 #12 hours
 
 #Workers are done. Collect the logs
 echo "Copying logs..."
-LOG_DIR=logs/${MODEL}b${BATCH_SIZE}m${NUM_NODES}g${GPU_PER_NODE}
+total_gpus=$(($NUM_NODES*$GPU_PER_NODE))
+LOG_DIR=logs/${MODEL}_b${BATCH_SIZE}_g${total_gpus}
 rm -rf $LOG_DIR
 mkdir -p $LOG_DIR
 

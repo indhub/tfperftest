@@ -36,7 +36,9 @@ esac
 shift # past argument or value
 done
 
+
 ngpu=1
+gpu_list=""
 while [ "$ngpu" -le "$MAX_GPUS" ]; do
     echo "Running with $ngpu GPUs"
     
@@ -52,5 +54,10 @@ while [ "$ngpu" -le "$MAX_GPUS" ]; do
     
     bash runtest.sh -m $MODEL -h $NODES_FILE -r $REMOTE_DIR -n $num_machines -g $gpu_per_machine -b $BATCH_SIZE
     
+    gpu_list=${gpu_list}${ngpu},
+    
     ngpu=$(($ngpu * 2))
 done
+
+gpu_list=`echo $gpu_list | rev | cut -c 2- | rev`
+bash tabulate.sh -m $MODEL -b $BATCH_SIZE -l logs -g "$gpu_list" -f logs/${MODEL}_b${BATCH_SIZE}.csv
