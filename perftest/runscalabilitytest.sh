@@ -60,4 +60,11 @@ while [ "$ngpu" -le "$MAX_GPUS" ]; do
 done
 
 gpu_list=`echo $gpu_list | rev | cut -c 2- | rev`
-bash tabulate.sh -m $MODEL -b $BATCH_SIZE -l logs -g "$gpu_list" -f logs/${MODEL}_b${BATCH_SIZE}.csv
+csv_file=logs/${MODEL}_b${BATCH_SIZE}.csv
+graph_file=logs/${MODEL}_b${BATCH_SIZE}.svg
+ideal_csv_file=$csv_file.ideal
+
+bash tabulate.sh -m $MODEL -b $BATCH_SIZE -l logs -g "$gpu_list" -f $csv_file -i
+
+python plotgraph.py --labels="TensorFlow,Ideal" --csv="${csv_file},${ideal_csv_file}" --file=$graph_file
+
