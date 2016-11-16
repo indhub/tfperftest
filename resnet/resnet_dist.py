@@ -77,7 +77,7 @@ def main(_):
                                         min_lrn_rate=0.0001,
                                         lrn_rate=0.1,
                                         num_residual_units=5,
-                                        use_bottleneck=False,
+                                        use_bottleneck=True,
                                         weight_decay_rate=0.0002,
                                         relu_leakiness=0.1,
                                         optimizer='mom')
@@ -125,22 +125,20 @@ def main(_):
             total_duration = 0
             total_duration_squared = 0
             
-            
             step = 0
             lrn_rate = 0.1
             
             while step <= 80:
-                sys.stdout.flush()
                 
                 start_time = time.time()
                 
                 _, step = sess.run([train_op, global_step], feed_dict={model.lrn_rate: lrn_rate})
                 
                 duration = time.time() - start_time
-
+                
                 examples_per_sec = hps.batch_size / float(duration)
                 format_str = ('Worker %d: %s: step %d, loss = NA'
-                              '(%.1f examples/sec; %.3f  sec/batch)')
+                              '(%.4f examples/sec; %.3f  sec/batch)')
 
                 if step > num_steps_burn_in:
                     print(format_str %
@@ -148,13 +146,11 @@ def main(_):
                              examples_per_sec, duration))
                     sys.stdout.flush()
                 else:
-                    print('Not considering step %d (%.1f samples/sec)' %
-                                    (step, examples_per_sec))
+                    print('Not considering burn-in step %d (%.4f samples/sec; %.3f  sec/batch)' %
+                                    (step, examples_per_sec, duration))
                     sys.stdout.flush()
-
                     
         sv.stop()
-
                                 
 if __name__ == "__main__":
     tf.app.run()
