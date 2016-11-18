@@ -30,31 +30,36 @@ Here is an example config from ~/.ssh/config to create an ssh alias:
 
 Step 2: Checkout https://github.com/indhub/tfperftest.git and CD to 'perftest' (https://github.com/indhub/tfperftest/tree/master/perftest) directory.
 
-Step 3: Run runtest.sh.
+Step 3: Run runscalabilitytest.sh
 
 Example: 
 
-    bash runtest.sh -m inceptionv3 -h nodes -r /tmp/ -n 2 -g 2 -b 32
+    bash runscalabilitytest.sh -h nodes -m inceptionv3 -g 16 -b 32 -r /tmp/ -x 128
 
 where,
 
+-h: node file described in step 1.
+
 -m: Name of the model to run. Can be 'inceptionv3', 'alexnet' or 'resnet'.
-
--r: a directory in the remote nodes where to copy the scripts and run the training (/tmp/ should work).
-
--n: number of nodes to use in training. 
 
 -g: number of GPUs in each node to use for training. 
 
--b: batch size per GPU.
+-b: mini batch size per GPU.
 
--n: node file described in step 1.
+-r: a directory in the remote nodes where to copy the scripts and run the training (/tmp/ should work).
+
+-x: Maximum GPUs to use for scalability test. 
+
+
+Example:
+
+bash runscalabilitytest.sh -h nodes -m inceptionv3 -g 16 -b 32 -r /tmp/ -x 128
+
+will run inceptionv3 on 1, 2, 4, 8, ..... 128 GPUs, recording the images processed per second in each of those runs and tabulate that data as output into logs/inceptionv3_b32.csv (same data will be plotted in logs/inceptionv3_b32.svg). The script use the hosts listed in 'nodes' to run the training. The script will assume each of those hosts have 16 GPUs in them. The script will use a mini batch size of 32.
+
+
 
 ## What does the script output?
 
-Here is a sample output:
-Images processed per second is writed under logs directory as inceptionv3_b32.csv, alexnet_b512.csv and resnet_b2.csv. Same data is plotted in graph in inceptionv3_b32.svg, alexnet_b512.svg and resnet_b2.svg.
-
-
-
+Images processed per second is writed under logs directory as inceptionv3_b[batch_size].csv, alexnet_b[batch_size].csv and resnet_b[batch_size].csv. Same data is plotted in graph in inceptionv3_b[batch_size].svg, alexnet_b[batch_size].svg and resnet_b[batch_size].svg.
 
