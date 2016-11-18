@@ -43,7 +43,7 @@ while [ "$ngpu" -le "$MAX_GPUS" ]; do
     echo "Running with $ngpu GPUs"
     
     num_machines=$(($ngpu/$MAX_GPU_PER_MACHINE))
-    if ! ((num_machines % $MAX_GPU_PER_MACHINE)); then
+    if (($ngpu % $MAX_GPU_PER_MACHINE)); then
         num_machines=$((num_machines + 1))
     fi
     
