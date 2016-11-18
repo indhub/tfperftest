@@ -261,12 +261,12 @@ def main(_):
                 sv.start_queue_runners(sess, [chief_queue_runner])
                 sess.run(init_token_op)
             
-            num_steps_burn_in = 50
+            num_steps_burn_in = 10
             total_duration = 0
             total_duration_squared = 0
             
             step = 0
-            while step <= 80:
+            while step <= 20:
                 sys.stdout.flush()
                 batch_xs, batch_ys = synthetic_data(batch_size)
                 train_feed = {x: batch_xs, y_: batch_ys}

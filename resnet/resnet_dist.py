@@ -121,14 +121,14 @@ def main(_):
                 sv.start_queue_runners(sess, [chief_queue_runner])
                 sess.run(init_token_op)
             
-            num_steps_burn_in = 50
+            num_steps_burn_in = 10
             total_duration = 0
             total_duration_squared = 0
             
             step = 0
             lrn_rate = 0.1
             
-            while step <= 80:
+            while step <= 20:
                 
                 start_time = time.time()
                 

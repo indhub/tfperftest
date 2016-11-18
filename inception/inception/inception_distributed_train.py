@@ -276,7 +276,7 @@ def train(target, dataset, cluster_spec):
       # simultaneously in order to prevent running out of GPU memory.
       next_summary_time = time.time() + FLAGS.save_summaries_secs
       step = 0
-      while (not sv.should_stop()) and step<=80:
+      while (not sv.should_stop()) and step<=20:
         try:
 
           start_time = time.time()
@@ -309,7 +309,7 @@ def train(target, dataset, cluster_spec):
           examples_per_sec = FLAGS.batch_size / float(duration)
           format_str = ('Worker %d: %s: step %d, loss = %.2f'
                         '(%.1f examples/sec; %.3f  sec/batch)')
-          if step >= 50 and step != profile_step+1:
+          if step >= 10 and step != profile_step+1:
             tf.logging.info(format_str %
                             (FLAGS.task_id, datetime.now(), step, loss_value,
                              examples_per_sec, duration))
