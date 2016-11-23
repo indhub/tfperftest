@@ -66,5 +66,5 @@ ideal_csv_file=$csv_file.ideal
 
 bash tabulate.sh -m $MODEL -b $BATCH_SIZE -l logs -g "$gpu_list" -f $csv_file -i
 
-python plotgraph.py --labels="TensorFlow,Ideal" --csv="${csv_file},${ideal_csv_file}" --file=$graph_file
+#python plotgraph.py --labels="TensorFlow,Ideal" --csv="${csv_file},${ideal_csv_file}" --file=$graph_file
 
